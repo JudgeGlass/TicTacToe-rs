@@ -1,7 +1,7 @@
 
 extern crate rand;
 
-use std::io;
+use std::io::{self, Write};
 use std::{u32};
 
 use rand::Rng;
@@ -19,22 +19,42 @@ fn main(){
 
     loop{
         g.get_pos();
-        g.draw_board();
         g.computer();
         g.draw_board();
         let winner = g.check_winner();
         if winner != "NONE"{
             if winner == "Tie"{
                 println!("Tie");
-            }else{
-                println!("{} has won!", winner);
-                break;
             }
+            println!("{} has won!", winner);
+
+            print!("Play again?[Y/N]: ");
+            io::stdout().flush();
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).expect("Error reading line");
+
+            if input == "Y" || input == "y"{
+                g.restart_board();
+            }
+
+            break;
         }
     }
 }
 
 impl Game{
+    pub fn restart_board(&mut self){
+        self.board[0] = String::from("1");
+        self.board[1] = String::from("2");
+        self.board[2] = String::from("3");
+        self.board[3] = String::from("4");
+        self.board[4] = String::from("5");
+        self.board[5] = String::from("6");
+        self.board[6] = String::from("7");
+        self.board[7] = String::from("8");
+        self.board[8] = String::from("9");
+    }
+
     pub fn draw_board(&self){
         println!("");
         println!("{}|{}|{}", self.board[0], self.board[1], self.board[2]);
@@ -46,22 +66,32 @@ impl Game{
     }
 
     pub fn get_pos(&mut self){
+        loop{
+            print!("Choose a number: ");
+            io::stdout().flush();
 
-        let mut number = String::new();
-        io::stdin().read_line(&mut number)
-            .expect("Could not read line!");
-        print!("Choose a number: ");
+            let mut number = String::new();
+            io::stdin().read_line(&mut number)
+                .expect("Could not read line!");
 
-        let number: u64 = number.trim().parse().expect("Error: not a number");
+            let number: u64 = match number.trim().parse() {
+                Ok(num) => num,
+                Err(_) => {
+                    println!("Invalid input!");
+                    continue;
+                },
+            };
 
-        let pos = number - 1;
-        for _i in 0..9{
+            let pos = number - 1;
             if self.board[pos as usize] != "X" && self.board[pos as usize] != "O"{
                 if self.user_x == 1{
                     self.board[pos as usize] = String::from("X");
                 }else{
                     self.board[pos as usize] = String::from("O");
                 }
+                break;
+            }else{
+                println!("Spot taken / invalid input");
             }
         }
     } 
