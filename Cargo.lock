@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust_test"
+name = "tic_tac_toe-rs"
 version = "0.1.0"
 dependencies = [
  "rand 0.3.18 (registry+https://github.com/rust-lang/crates.io-index)",
